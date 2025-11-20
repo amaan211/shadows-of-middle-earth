@@ -4,18 +4,10 @@
  */
 
 #include "Weapon.h"
-
-/**
- * @brief Constructs a Weapon object
- * @param weaponName Name of the weapon
- * @param weaponWeight Weight of the weapon
- * @param attackBonus Attack bonus provided by weapon
- */
-Weapon::Weapon(std::string weaponName, int weaponWeight, int attackBonus)
-    : name(weaponName), weight(weaponWeight), attackMod(attackBonus) {}
+#include <iostream>
 
 std::string Weapon::getName() const {
-    return name;
+    return "Unknown";
 }
 
 std::string Weapon::getCategory() const {
@@ -23,7 +15,7 @@ std::string Weapon::getCategory() const {
 }
 
 int Weapon::getWeight() const {
-    return weight;
+    return weight * 2;
 }
 
 int Weapon::getAttackMod() const {
@@ -31,19 +23,21 @@ int Weapon::getAttackMod() const {
 }
 
 int Weapon::getDefenceMod() const {
-    return 0; // Weapons don't provide defence
+    return 10;
 }
 
 int Weapon::getHealthMod() const {
-    return 0; // Weapons don't affect health
+    return 0;
 }
 
 int Weapon::getStrengthMod() const {
-    return 0; // Weapons don't affect strength
+    return 0;
 }
 
 std::string Weapon::getDescription() const {
-    // Build descriptive string showing weapon stats
-    return name + " [Weapon] - Attack: +" + std::to_string(attackMod) +
-           ", Weight: " + std::to_string(weight);
+    return name + " [Weapon] - Attack: +" + std::to_string(attackMod);
+}
+
+void Weapon::setAttack(int newAttack) {
+    attackMod = newAttack;
 }
