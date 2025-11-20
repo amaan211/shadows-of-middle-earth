@@ -9,10 +9,14 @@ SOURCES += \
     # src/Armour.cpp \
     # src/Inventory.cpp \
     src/Armour.cpp \
+    src/Inventory.cpp \
     src/Item.cpp \
     # src/ItemFactory.cpp \
     # src/Ring.cpp \
     # src/Shield.cpp \
+    src/ItemFactory.cpp \
+    src/Ring.cpp \
+    src/Shield.cpp \
     src/Weapon.cpp \
     src/main.cpp \
     # src/Game.cpp \
@@ -59,8 +63,11 @@ HEADERS += \
     src/Armour.h \
     src/Armour.h \
     src/Inventory.h \
+    src/Inventory.h \
     src/Item.h \
     src/ItemFactory.h \
+    src/ItemFactory.h \
+    src/Ring.h \
     src/Ring.h \
     src/Shield.h \
     src/Shield.h \
