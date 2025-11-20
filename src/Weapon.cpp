@@ -1,5 +1,16 @@
+/**
+ * @file Weapon.cpp
+ * @brief Implementation of Weapon class
+ */
+
 #include "Weapon.h"
 
+/**
+ * @brief Constructs a Weapon object
+ * @param weaponName Name of the weapon
+ * @param weaponWeight Weight of the weapon
+ * @param attackBonus Attack bonus provided by weapon
+ */
 Weapon::Weapon(std::string weaponName, int weaponWeight, int attackBonus)
     : name(weaponName), weight(weaponWeight), attackMod(attackBonus) {}
 
@@ -20,17 +31,19 @@ int Weapon::getAttackMod() const {
 }
 
 int Weapon::getDefenceMod() const {
-    return 0;
+    return 0; // Weapons don't provide defence
 }
 
 int Weapon::getHealthMod() const {
-    return 0;
+    return 0; // Weapons don't affect health
 }
 
 int Weapon::getStrengthMod() const {
-    return 0;
+    return 0; // Weapons don't affect strength
 }
 
 std::string Weapon::getDescription() const {
-    return name + " [Weapon] - Attack: +" + std::to_string(attackMod) + ", Weight: " + std::to_string(weight);
+    // Build descriptive string showing weapon stats
+    return name + " [Weapon] - Attack: +" + std::to_string(attackMod) +
+           ", Weight: " + std::to_string(weight);
 }

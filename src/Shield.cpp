@@ -1,3 +1,8 @@
+/**
+ * @file Shield.cpp
+ * @brief Implementation of Shield class
+ */
+
 #include "Shield.h"
 
 Shield::Shield(std::string shieldName, int shieldWeight, int defenceBonus, int attackPenalty)
@@ -24,17 +29,17 @@ int Shield::getDefenceMod() const {
 }
 
 int Shield::getHealthMod() const {
-    return 0;
+    return 0; // Shields don't affect health
 }
 
 int Shield::getStrengthMod() const {
-    return 0;
+    return 0; // Shields don't affect strength
 }
 
 std::string Shield::getDescription() const {
     std::string desc = name + " [Shield] - Defence: +" + std::to_string(defenceMod);
     if (attackMod < 0) {
-        desc += ", Attack: " + std::to_string(attackMod);
+        desc += ", Attack: " + std::to_string(attackMod); // Show penalty if exists
     }
     desc += ", Weight: " + std::to_string(weight);
     return desc;

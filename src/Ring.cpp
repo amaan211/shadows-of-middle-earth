@@ -1,3 +1,8 @@
+/**
+ * @file Ring.cpp
+ * @brief Implementation of Ring class
+ */
+
 #include "Ring.h"
 
 Ring::Ring(std::string ringName, int ringWeight, int healthBonus, int strengthBonus)
@@ -16,11 +21,11 @@ int Ring::getWeight() const {
 }
 
 int Ring::getAttackMod() const {
-    return 0;
+    return 0; // Rings don't affect attack
 }
 
 int Ring::getDefenceMod() const {
-    return 0;
+    return 0; // Rings don't affect defence
 }
 
 int Ring::getHealthMod() const {
@@ -34,9 +39,11 @@ int Ring::getStrengthMod() const {
 std::string Ring::getDescription() const {
     std::string desc = name + " [Ring]";
     if (healthMod != 0) {
+        // Show health modification with sign
         desc += " Health: " + std::string(healthMod > 0 ? "+" : "") + std::to_string(healthMod);
     }
     if (strengthMod != 0) {
+        // Show strength modification with sign
         desc += " Strength: " + std::string(strengthMod > 0 ? "+" : "") + std::to_string(strengthMod);
     }
     desc += ", Weight: " + std::to_string(weight);
