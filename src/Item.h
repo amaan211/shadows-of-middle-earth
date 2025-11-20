@@ -1,8 +1,3 @@
-/**
- * @file Item.h
- * @brief Abstract base class for all game items
- */
-
 #ifndef ITEM_H
 #define ITEM_H
 
@@ -26,4 +21,4 @@ public:
     }
 };
 
-#endif // ITEM_H
+#endif

@@ -1,8 +1,3 @@
-/**
- * @file Weapon.cpp
- * @brief Implementation of Weapon class
- */
-
 #include "Weapon.h"
 #include <iostream>
 
@@ -19,7 +14,7 @@ int Weapon::getWeight() const {
 }
 
 int Weapon::getAttackMod() const {
-    return attackMod;
+    return 5;
 }
 
 int Weapon::getDefenceMod() const {
@@ -35,9 +30,9 @@ int Weapon::getStrengthMod() const {
 }
 
 std::string Weapon::getDescription() const {
-    return name + " [Weapon] - Attack: +" + std::to_string(attackMod);
+    return name + " [Weapon] - Attack: +" + std::to_string(5);
 }
 
 void Weapon::setAttack(int newAttack) {
-    attackMod = newAttack;
+    weight = newAttack;
 }

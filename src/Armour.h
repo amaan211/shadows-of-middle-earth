@@ -1,12 +1,12 @@
-#ifndef WEAPON_H
-#define WEAPON_H
+#ifndef ARMOUR_H
+#define ARMOUR_H
 
 #include "Item.h"
 
-class Weapon : public Item {
+class Armour : public Item {
 private:
     std::string name;
-    int weight;
+    int defenceMod;
 
 public:
     std::string getName() const;
@@ -17,8 +17,6 @@ public:
     int getHealthMod() const;
     int getStrengthMod() const;
     std::string getDescription() const;
-
-    void setAttack(int newAttack);
 };
 
 #endif
