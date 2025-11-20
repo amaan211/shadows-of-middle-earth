@@ -2,8 +2,11 @@
 #define ITEMFACTORY_H
 
 #include <memory>
-#include "Weapon.h"
 #include <vector>
+#include "Weapon.h"
+#include "Armour.h"
+#include "Shield.h"
+#include "Ring.h"
 
 class ItemFactory {
 public:

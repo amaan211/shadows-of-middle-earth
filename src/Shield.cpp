@@ -1,5 +1,8 @@
 #include "Shield.h"
 
+Shield::Shield(std::string shieldName, int shieldWeight, int defenceBonus, int attackPenalty)
+    : name(shieldName), weight(shieldWeight), defenceMod(defenceBonus), attackMod(attackPenalty) {}
+
 std::string Shield::getName() const {
     return name;
 }
@@ -13,7 +16,7 @@ int Shield::getWeight() const {
 }
 
 int Shield::getAttackMod() const {
-    return -5;
+    return attackMod;
 }
 
 int Shield::getDefenceMod() const {
@@ -21,7 +24,7 @@ int Shield::getDefenceMod() const {
 }
 
 int Shield::getHealthMod() const {
-    return 5;
+    return 0;
 }
 
 int Shield::getStrengthMod() const {
@@ -29,5 +32,10 @@ int Shield::getStrengthMod() const {
 }
 
 std::string Shield::getDescription() const {
-    return name + " [Shield] - Defence: " + std::to_string(defenceMod);
+    std::string desc = name + " [Shield] - Defence: +" + std::to_string(defenceMod);
+    if (attackMod < 0) {
+        desc += ", Attack: " + std::to_string(attackMod);
+    }
+    desc += ", Weight: " + std::to_string(weight);
+    return desc;
 }

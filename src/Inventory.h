@@ -10,10 +10,10 @@ class Inventory {
 private:
     std::vector<std::shared_ptr<Item>> items;
     int currentWeight;
+    int maxWeight;
 
 public:
-    Inventory(int maxCapacity);
-
+    explicit Inventory(int maxCapacity);
     bool addItem(std::shared_ptr<Item> item);
     bool removeItem(const std::string& itemName);
     bool removeItem(int index);

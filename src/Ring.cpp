@@ -1,5 +1,8 @@
 #include "Ring.h"
 
+Ring::Ring(std::string ringName, int ringWeight, int healthBonus, int strengthBonus)
+    : name(ringName), weight(ringWeight), healthMod(healthBonus), strengthMod(strengthBonus) {}
+
 std::string Ring::getName() const {
     return name;
 }
@@ -9,7 +12,7 @@ std::string Ring::getCategory() const {
 }
 
 int Ring::getWeight() const {
-    return 1;
+    return weight;
 }
 
 int Ring::getAttackMod() const {
@@ -25,9 +28,17 @@ int Ring::getHealthMod() const {
 }
 
 int Ring::getStrengthMod() const {
-    return 0;
+    return strengthMod;
 }
 
 std::string Ring::getDescription() const {
-    return name + " [Ring] - Health: +" + std::to_string(healthMod);
+    std::string desc = name + " [Ring]";
+    if (healthMod != 0) {
+        desc += " Health: " + std::string(healthMod > 0 ? "+" : "") + std::to_string(healthMod);
+    }
+    if (strengthMod != 0) {
+        desc += " Strength: " + std::string(strengthMod > 0 ? "+" : "") + std::to_string(strengthMod);
+    }
+    desc += ", Weight: " + std::to_string(weight);
+    return desc;
 }
