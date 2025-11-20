@@ -6,6 +6,13 @@ CONFIG += c++17 cmdline
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 SOURCES += \
+    src/Armour.cpp \
+    src/Inventory.cpp \
+    src/Item.cpp \
+    src/ItemFactory.cpp \
+    src/Ring.cpp \
+    src/Shield.cpp \
+    src/Weapon.cpp \
     src/main.cpp \
     # src/Game.cpp \
     # src/Board.cpp \
@@ -46,3 +53,12 @@ SOURCES += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+HEADERS += \
+    src/Armour.h \
+    src/Inventory.h \
+    src/Item.h \
+    src/ItemFactory.h \
+    src/Ring.h \
+    src/Shield.h \
+    src/Weapon.h
