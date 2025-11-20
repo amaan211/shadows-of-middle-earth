@@ -3,22 +3,18 @@
 
 #include <string>
 #include <memory>
-#include <iostream>
 
 class Item {
 public:
-    virtual std::string getName() const;
-    virtual std::string getCategory() const;
-    virtual int getWeight() const;
-    virtual int getAttackMod() const;
-    virtual int getDefenceMod() const;
-    virtual int getHealthMod() const;
-    virtual int getStrengthMod() const;
-    virtual std::string getDescription() const;
-
-    void printInfo() {
-        std::cout << "Item info" << std::endl;
-    }
+    virtual ~Item() = default;
+    virtual std::string getName() const = 0;
+    virtual std::string getCategory() const = 0;
+    virtual int getWeight() const = 0;
+    virtual int getAttackMod() const = 0;
+    virtual int getDefenceMod() const = 0;
+    virtual int getHealthMod() const = 0;
+    virtual int getStrengthMod() const = 0;
+    virtual std::string getDescription() const = 0;
 };
 
 #endif

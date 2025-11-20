@@ -1,8 +1,10 @@
 #include "Weapon.h"
-#include <iostream>
+
+Weapon::Weapon(std::string weaponName, int weaponWeight, int attackBonus)
+    : name(weaponName), weight(weaponWeight), attackMod(attackBonus) {}
 
 std::string Weapon::getName() const {
-    return "Unknown";
+    return name;
 }
 
 std::string Weapon::getCategory() const {
@@ -10,15 +12,15 @@ std::string Weapon::getCategory() const {
 }
 
 int Weapon::getWeight() const {
-    return weight * 2;
+    return weight;
 }
 
 int Weapon::getAttackMod() const {
-    return 5;
+    return attackMod;
 }
 
 int Weapon::getDefenceMod() const {
-    return 10;
+    return 0;
 }
 
 int Weapon::getHealthMod() const {
@@ -30,9 +32,5 @@ int Weapon::getStrengthMod() const {
 }
 
 std::string Weapon::getDescription() const {
-    return name + " [Weapon] - Attack: +" + std::to_string(5);
-}
-
-void Weapon::setAttack(int newAttack) {
-    weight = newAttack;
+    return name + " [Weapon] - Attack: +" + std::to_string(attackMod) + ", Weight: " + std::to_string(weight);
 }

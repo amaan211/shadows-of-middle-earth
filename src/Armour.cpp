@@ -1,5 +1,8 @@
 #include "Armour.h"
 
+Armour::Armour(std::string armourName, int armourWeight, int defenceBonus, int attackPenalty)
+    : name(armourName), weight(armourWeight), defenceMod(defenceBonus), attackMod(attackPenalty) {}
+
 std::string Armour::getName() const {
     return name;
 }
@@ -9,11 +12,11 @@ std::string Armour::getCategory() const {
 }
 
 int Armour::getWeight() const {
-    return 0;
+    return weight;
 }
 
 int Armour::getAttackMod() const {
-    return 0;
+    return attackMod;
 }
 
 int Armour::getDefenceMod() const {
@@ -21,7 +24,7 @@ int Armour::getDefenceMod() const {
 }
 
 int Armour::getHealthMod() const {
-    return 10;
+    return 0;
 }
 
 int Armour::getStrengthMod() const {
@@ -29,5 +32,10 @@ int Armour::getStrengthMod() const {
 }
 
 std::string Armour::getDescription() const {
-    return name + " [Armour]";
+    std::string desc = name + " [Armour] - Defence: +" + std::to_string(defenceMod);
+    if (attackMod < 0) {
+        desc += ", Attack: " + std::to_string(attackMod);
+    }
+    desc += ", Weight: " + std::to_string(weight);
+    return desc;
 }

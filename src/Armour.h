@@ -6,17 +6,20 @@
 class Armour : public Item {
 private:
     std::string name;
+    int weight;
     int defenceMod;
+    int attackMod;
 
 public:
-    std::string getName() const;
-    std::string getCategory() const;
-    int getWeight() const;
-    int getAttackMod() const;
-    int getDefenceMod() const;
-    int getHealthMod() const;
-    int getStrengthMod() const;
-    std::string getDescription() const;
+    Armour(std::string armourName, int armourWeight, int defenceBonus, int attackPenalty = 0);
+    std::string getName() const override;
+    std::string getCategory() const override;
+    int getWeight() const override;
+    int getAttackMod() const override;
+    int getDefenceMod() const override;
+    int getHealthMod() const override;
+    int getStrengthMod() const override;
+    std::string getDescription() const override;
 };
 
 #endif
