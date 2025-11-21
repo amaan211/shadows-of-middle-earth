@@ -1,13 +1,6 @@
 /**
  * @file Board.h
- * @brief Board manages a grid of Square objects (smart-pointer managed) and time (day/night).
- *
- * Interaction expectations (documented for other modules):
- * - getSquare(row,col) returns shared_ptr<Square> for Game/Combat/Inventory to inspect.
- * - initializeBoard accepts factory callables to create Item/Character instances.
- * - advanceTime() must be called by Game controller after each command; day/night toggles every 5 commands.
- *
- * NOTE: The Board does not implement combat or inventory logic; it only provides squares and time state.
+ * @brief Game board management with smart pointers
  */
 
 #ifndef BOARD_H
@@ -15,54 +8,89 @@
 
 #include <vector>
 #include <memory>
-#include <functional>
-#include "Position.h"
+#include "Square.h"
+#include "ItemFactory.h"
+#include "Character.h"
 
-class Square;
-class Item;
-class Character;
-
+/**
+ * @class Board
+ * @brief Manages the game board using smart pointers
+ *
+ * Creates and manages a 2D grid of squares using std::shared_ptr.
+ * Handles player movement, board initialization, and square interactions.
+ */
 class Board {
-public:
-    // Factory signatures for initialization:
-    // enemyFactory -> returns shared_ptr<Character> (may be nullptr to indicate no enemy)
-    // itemFactory  -> returns unique_ptr<Item> (may be nullptr)
-    using EnemyFactory = std::function<std::shared_ptr<Character>()>;
-    using ItemFactory  = std::function<std::unique_ptr<Item>()>;
-
-    Board(unsigned rows, unsigned cols);
-    ~Board();
-
-    // Build / initialize
-    // P: factories will be called for each square based on probabilities
-    void initializeBoard(EnemyFactory enemyFactory, ItemFactory itemFactory,
-                         double enemyProb = 0.15, double itemProb = 0.15);
-
-    // Access
-    std::shared_ptr<Square> getSquare(int row, int col);
-    bool isValidPosition(int row, int col) const;
-    Position getStartPosition() const;
-
-    // Movement
-    // direction: 'N','S','E','W' (case insensitive)
-    // Returns true if playerPos updated; false if invalid move
-    bool movePlayer(Position &playerPos, char direction);
-
-    // Time management (every command should call advanceTime)
-    void advanceTime();
-    bool isDaytime() const;
-    unsigned getCommandCount() const;
-
 private:
-    unsigned rows;
-    unsigned cols;
-    std::vector<std::shared_ptr<Square>> squares; // row-major: index = row*cols + col
+    std::vector<std::vector<std::shared_ptr<Square>>> squares;
+    int width;
+    int height;
+    int playerX;
+    int playerY;
+    bool isDaytime;
+    int commandCount;
 
-    Position startPosition;
-    unsigned commandCount;
-    bool daytime;
+public:
+    /**
+     * @brief Constructor for Board
+     * @param boardWidth Width of the game board
+     * @param boardHeight Height of the game board
+     */
+    Board(int boardWidth, int boardHeight);
 
-    int indexFromRC(int row, int col) const;
+    /**
+     * @brief Initialize the board with random items and enemies
+     */
+    void initializeBoard();
+
+    /**
+     * @brief Get the square at specified coordinates
+     * @param x X coordinate
+     * @param y Y coordinate
+     * @return std::shared_ptr<Square> Pointer to square
+     */
+    std::shared_ptr<Square> getSquare(int x, int y) const;
+
+    /**
+     * @brief Get player's current X position
+     * @return int X coordinate
+     */
+    int getPlayerX() const;
+
+    /**
+     * @brief Get player's current Y position
+     * @return int Y coordinate
+     */
+    int getPlayerY() const;
+
+    /**
+     * @brief Move player in specified direction
+     * @param direction Movement direction (north, south, east, west)
+     * @return bool True if movement was successful
+     */
+    bool movePlayer(const std::string& direction);
+
+    /**
+     * @brief Get current time of day
+     * @return bool True if daytime, false if nighttime
+     */
+    bool getIsDaytime() const;
+
+    /**
+     * @brief Increment command count and update day/night cycle
+     */
+    void incrementCommandCount();
+
+    /**
+     * @brief Get description of player's current location
+     * @return std::string Formatted location description
+     */
+    std::string getCurrentLocationDescription() const;
+
+    /**
+     * @brief Get board dimensions
+     * @return std::pair<int, int> (width, height)
+     */
+    std::pair<int, int> getDimensions() const;
 };
 
 #endif // BOARD_H

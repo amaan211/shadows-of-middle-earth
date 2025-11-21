@@ -1,73 +1,66 @@
 /**
  * @file Square.cpp
- * @brief Implementation of Square methods with pseudo-code comments for non-trivial logic.
+ * @brief Implementation of Square class
  */
 
 #include "Square.h"
-#include <utility>
 
-Square::Square(const Position &pos) : position(pos), itemPtr(nullptr), enemyPtr(nullptr) {}
-
-Square::~Square() = default;
-
-// hasEnemy()
-// PSEUDO:
-// return enemyPtr != nullptr
-bool Square::hasEnemy() const {
-    return (enemyPtr != nullptr);
+Square::Square() : isEmpty(true) {
+    // Initialize as empty square
 }
 
-// hasItem()
-// PSEUDO:
-// return itemPtr != nullptr
-bool Square::hasItem() const {
-    return (itemPtr != nullptr);
+bool Square::getIsEmpty() const {
+    return isEmpty && !item && !enemy;
 }
 
-// setItem(item)
-// PSEUDO:
-// if (itemPtr != nullptr) return false
-// else itemPtr = std::move(item); return true
-bool Square::setItem(std::unique_ptr<Item> item) {
-    if (itemPtr) return false;
-    itemPtr = std::move(item);
-    return true;
+void Square::setItem(std::shared_ptr<Item> newItem) {
+    item = newItem;
+    isEmpty = false;
 }
 
-// takeItem()
-// PSEUDO:
-// if (itemPtr == nullptr) return nullptr
-// tmp = std::move(itemPtr)
-// itemPtr = nullptr
-// return tmp
-std::unique_ptr<Item> Square::takeItem() {
-    if (!itemPtr) return nullptr;
-    std::unique_ptr<Item> tmp = std::move(itemPtr);
-    itemPtr = nullptr;
-    return tmp;
+std::shared_ptr<Item> Square::getItem() const {
+    return item;
 }
 
-// setEnemy(enemy)
-// PSEUDO:
-// enemyPtr = enemy (shared ownership)
-void Square::setEnemy(std::shared_ptr<Character> enemy) {
-    enemyPtr = enemy;
+void Square::removeItem() {
+    item.reset();
+    // Check if square becomes empty
+    if (!enemy) {
+        isEmpty = true;
+    }
 }
 
-// takeEnemy()
-// PSEUDO:
-// tmp = enemyPtr
-// enemyPtr.reset()
-// return tmp
-std::shared_ptr<Character> Square::takeEnemy() {
-    std::shared_ptr<Character> tmp = enemyPtr;
-    enemyPtr.reset();
-    return tmp;
+void Square::setEnemy(std::shared_ptr<Character> newEnemy) {
+    enemy = newEnemy;
+    isEmpty = false;
 }
 
-// getPosition()
-// PSEUDO:
-// return position
-const Position& Square::getPosition() const {
-    return position;
+std::shared_ptr<Character> Square::getEnemy() const {
+    return enemy;
+}
+
+void Square::removeEnemy() {
+    enemy.reset();
+    // Check if square becomes empty
+    if (!item) {
+        isEmpty = true;
+    }
+}
+
+std::string Square::getDescription() const {
+    std::string description = "This location contains: ";
+
+    if (isEmpty) {
+        description += "nothing";
+    } else {
+        if (item) {
+            description += "a " + item->getName();
+        }
+        if (enemy) {
+            if (item) description += " and ";
+            description += "a " + enemy->getRace() + " enemy named " + enemy->getName();
+        }
+    }
+
+    return description;
 }

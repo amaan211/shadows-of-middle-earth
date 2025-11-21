@@ -1,195 +1,132 @@
 /**
  * @file Character.h
- * @brief BAse character class representing all playable and enemy characters.
+ * @brief Abstract base class for all game characters
  */
 
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#include "Race.h"
 #include <string>
-#include <vector>
 #include <memory>
-#include <random>
-#include <algorithm>
-#include <iostream>
-/**
- * @struct Item
- * @brief Represents an item in the game that can modify character stats.
- *
- * Items can affect attack, defence, health, strength and weight,
- * different items will use this structure during the gameplay.
- */
-
-struct Item{
-    std::string name;   //Name of Item
-    int attackMod = 0;  //increae/decrease attack
-    int defenceMod = 0; //defence modifier
-    int healthMod = 0;
-    int strengthMod = 0;    //When carrying items like swords can modify
-    int weight = 0;
-};
+#include "Inventory.h"
 
 /**
  * @class Character
- * @brief Base class for all characters in the game including enemies
+ * @brief Abstract base class representing any character in the game
  *
- * This class stores shared data like race, stats, inventory and
- * behaviour such as attack/defence calculations.
- * Race-specific behaviour is implemented by overriding the onSuccessfulDefence()
+ * Defines the interface for all character types including players and enemies.
+ * Uses polymorphism to handle different races through common interface.
  */
-
-class Character{
+class Character {
 protected:
-    std::string name;       //Basic info
-    Race race;
-    TimeOfDay tod;
-    RaceProperties baseProps;
-
-    int health;         //dynamically changing stats
+    std::string name;
+    int attack;
+    int defence;
+    int health;
     int strength;
+    double attackChance;
+    double defenceChance;
+    Inventory inventory;
 
-    std::vector<Item> inventory;    //holds all items of the character
-
-    std::mt19937 rng;       //This is used for attack chances, damage, etc
-
-public:         //When a character is initiated, we can load their base stats based on their race.
+public:
     /**
-     * @brief Constructor for Character
-     * @param n Name of the Character
-     * @param r Race
-     * @param t Current time of game(Day/Night)
-     */
-
-    Character(const std::string& n, Race r, TimeOfDay t = TimeOfDay::Day): name(n), race(r), tod(t){
-        baseProps = getRaceProperties(r, t);
-        health = baseProps.baseHealth;      //set initial health and strength values
-        strength = baseProps.baseStrength;
-        std::random_device rd;      //This random generator will ensure randomness for different chances
-        rng.seed(rd());
-    }
-
-    /**
-     * @brief ~Character - Virtual Destructor
+     * @brief Virtual destructor for proper polymorphism
      */
     virtual ~Character() = default;
 
     /**
-     * @brief getName
-     * @return Character's name
+     * @brief Constructor for Character
+     * @param charName Character name
+     * @param baseAttack Base attack value
+     * @param baseDefence Base defence value
+     * @param baseHealth Base health value
+     * @param baseStrength Base strength value
      */
-    std::string getName() const {return name;}
-    /**
-     * @brief getRace
-     * @return Character's race
-     */
-    Race getRace() const {return race;}
-    /**
-     * @brief getHealth
-     * @return Current health value of the character
-     */
-    int getHealth() const {return health;}
-    /**
-     * @brief isAlive
-     * @return True if characters health is above 0
-     */
-    bool isAlive() const {return health > 0;}   //Checks if the character is alive
+    Character(std::string charName, int baseAttack, int baseDefence,
+              int baseHealth, int baseStrength);
 
     /**
-     * @brief getAttackValue - computes total attack value
-     * @return Base attack plus all item modifiers
+     * @brief Get character's current attack value
+     * @return int Total attack including item modifications
      */
-    virtual int getAttackValue() const {    //calculates total attack value + any attack bonuses
-        int total = baseProps.baseAttack;
-        for (auto &it : inventory) total += it.attackMod;
-        return total;
-    }
-    /**
-     * @brief getDefenceValue - computes total defence value
-     * @return Base defence plus all modifiers
-     */
-    virtual int getDefenceValue() const {       //calculates total defence value + any defence bonuses
-        int total = baseProps.baseDefence;
-        for( auto &it : inventory) total += it.defenceMod;
-        return total;
-    }
+    virtual int getAttack() const;
 
     /**
-     * @brief getAttackChance - Retrieves attack success probability
-     * @return pair(numerator/denominator)
+     * @brief Get character's current defence value
+     * @return int Total defence including item modifications
      */
-    virtual std::pair<int,int> getAttackChance() const {
-        return {baseProps.attackChanceNum, baseProps.attackChanceDen};
-    }
-    /**
-     * @brief getDefenceChance - Retrieves defence success probability
-     * @return pair(numerator/denominator)
-     */
-    virtual std:: pair<int,int> getDefenceChance() const {
-        return {baseProps.defenceChanceNum, baseProps.defenceChanceDen};
-    }
+    virtual int getDefence() const;
 
     /**
-     * @brief called when a character successfully defends a attack
-     *
-     * Default is 0 damage, bt races override this method to implement special abilities
-     *
-     * @param attackerAdjustedAttack attack value after modifier
-     * @return Damage applied to defender
+     * @brief Get character's current health
+     * @return int Current health points
      */
-
-    virtual int onSuccessfulDefence(int attackerAdjustedAttack){
-        return 0;       //by default successful defence causes no damage unless item ability provides
-    }
+    virtual int getHealth() const;
 
     /**
-     * @brief Applies damage to character
-     * @param damage amount of health lost
+     * @brief Get character's strength (carrying capacity)
+     * @return int Strength value
      */
-    void takeDamage(int damage){
-        if(damage <= 0){
-            return;
-        }
-        health -= damage;
-        if(health < 0){
-            health = 0;
-        }
-    }
+    virtual int getStrength() const;
 
     /**
-     * @brief addItem - will add an item to the inventory and apply stat bonuses
-     * @param it Item to add
+     * @brief Get attack success probability
+     * @param isDaytime Current time of day
+     * @return double Attack chance (0.0 to 1.0)
      */
-    void addItem(const Item &it){
-        inventory.push_back(it);        // should apply the health/strength modifications
-        health += it.healthMod;
-        strength += it.strengthMod;
-    }
+    virtual double getAttackChance(bool isDaytime) const = 0;
 
     /**
-     * @brief rollChance - Performs a probability roll
-     * @param num Success numerator
-     * @param den Denominator
-     * @return True if roll succeeds
+     * @brief Get defence success probability
+     * @param isDaytime Current time of day
+     * @return double Defence chance (0.0 to 1.0)
      */
-    bool rollChance(int num, int den){
-        if(num <=0) {
-            return false;
-        }
-        if (num >= den){
-            return true;
-        }
-        std::uniform_int_distribution<int> dist(1,den);
-        int v = dist(rng);
-        return v <= num;
-    }
+    virtual double getDefenceChance(bool isDaytime) const = 0;
 
     /**
-     * @brief printStats - prints character stats to console
+     * @brief Process successful defence against an attack
+     * @param damage The potential damage from the attack
+     * @param attackerAttack The attacker's attack value
+     * @param isDaytime Current time of day
+     * @return int Actual damage taken after defence
      */
-    virtual void printStats() const {
-        std::cout << name << " (" << baseProps.name << ") A:" << getAttackValue() << " D:" << getDefenceValue() << " H:" << health << " S:" << strength << "\n";
-    }
+    virtual int processSuccessfulDefence(int damage, int attackerAttack, bool isDaytime) const = 0;
+
+    /**
+     * @brief Take damage from an attack
+     * @param damage Amount of damage to take
+     */
+    virtual void takeDamage(int damage);
+
+    /**
+     * @brief Check if character is defeated
+     * @return bool True if health <= 0
+     */
+    virtual bool isDefeated() const;
+
+    /**
+     * @brief Get character's name
+     * @return std::string Character name
+     */
+    virtual std::string getName() const;
+
+    /**
+     * @brief Get character's race
+     * @return std::string Race name
+     */
+    virtual std::string getRace() const = 0;
+
+    /**
+     * @brief Get gold value when defeated
+     * @return int Gold awarded to victor
+     */
+    virtual int getGoldValue() const;
+
+    /**
+     * @brief Get character's inventory
+     * @return Reference to inventory object
+     */
+    virtual Inventory& getInventory();
 };
 
 #endif // CHARACTER_H

@@ -130,6 +130,7 @@ public:
      * @brief Clear all items from inventory
      */
     void clear();
+
 };
 
 #endif // INVENTORY_H
