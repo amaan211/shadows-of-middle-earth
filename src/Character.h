@@ -1,3 +1,8 @@
+/**
+ * @file Character.h
+ * @brief BAse character class representing all playable and enemy characters.
+ */
+
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
@@ -8,9 +13,14 @@
 #include <random>
 #include <algorithm>
 #include <iostream>
+/**
+ * @struct Item
+ * @brief Represents an item in the game that can modify character stats.
+ *
+ * Items can affect attack, defence, health, strength and weight,
+ * different items will use this structure during the gameplay.
+ */
 
-//Minimal Item struct for stat modifiers which will expand further on during the gameplay
-//Every item in the game can modify a characters stats.
 struct Item{
     std::string name;   //Name of Item
     int attackMod = 0;  //increae/decrease attack
@@ -19,8 +29,16 @@ struct Item{
     int strengthMod = 0;    //When carrying items like swords can modify
     int weight = 0;
 };
-//This class represents any character in the game, it stores race, stats, items
-//THis class will be inherited by specific races with special abilities.
+
+/**
+ * @class Character
+ * @brief Base class for all characters in the game including enemies
+ *
+ * This class stores shared data like race, stats, inventory and
+ * behaviour such as attack/defence calculations.
+ * Race-specific behaviour is implemented by overriding the onSuccessfulDefence()
+ */
+
 class Character{
 protected:
     std::string name;       //Basic info
@@ -36,6 +54,13 @@ protected:
     std::mt19937 rng;       //This is used for attack chances, damage, etc
 
 public:         //When a character is initiated, we can load their base stats based on their race.
+    /**
+     * @brief Constructor for Character
+     * @param n Name of the Character
+     * @param r Race
+     * @param t Current time of game(Day/Night)
+     */
+
     Character(const std::string& n, Race r, TimeOfDay t = TimeOfDay::Day): name(n), race(r), tod(t){
         baseProps = getRaceProperties(r, t);
         health = baseProps.baseHealth;      //set initial health and strength values
@@ -44,37 +69,83 @@ public:         //When a character is initiated, we can load their base stats ba
         rng.seed(rd());
     }
 
+    /**
+     * @brief ~Character - Virtual Destructor
+     */
     virtual ~Character() = default;
+
+    /**
+     * @brief getName
+     * @return Character's name
+     */
     std::string getName() const {return name;}
+    /**
+     * @brief getRace
+     * @return Character's race
+     */
     Race getRace() const {return race;}
+    /**
+     * @brief getHealth
+     * @return Current health value of the character
+     */
     int getHealth() const {return health;}
+    /**
+     * @brief isAlive
+     * @return True if characters health is above 0
+     */
     bool isAlive() const {return health > 0;}   //Checks if the character is alive
 
+    /**
+     * @brief getAttackValue - computes total attack value
+     * @return Base attack plus all item modifiers
+     */
     virtual int getAttackValue() const {    //calculates total attack value + any attack bonuses
         int total = baseProps.baseAttack;
         for (auto &it : inventory) total += it.attackMod;
         return total;
     }
+    /**
+     * @brief getDefenceValue - computes total defence value
+     * @return Base defence plus all modifiers
+     */
     virtual int getDefenceValue() const {       //calculates total defence value + any defence bonuses
         int total = baseProps.baseDefence;
         for( auto &it : inventory) total += it.defenceMod;
         return total;
     }
 
+    /**
+     * @brief getAttackChance - Retrieves attack success probability
+     * @return pair(numerator/denominator)
+     */
     virtual std::pair<int,int> getAttackChance() const {
         return {baseProps.attackChanceNum, baseProps.attackChanceDen};
     }
+    /**
+     * @brief getDefenceChance - Retrieves defence success probability
+     * @return pair(numerator/denominator)
+     */
     virtual std:: pair<int,int> getDefenceChance() const {
         return {baseProps.defenceChanceNum, baseProps.defenceChanceDen};
     }
 
-    //this function must be called when the defender has successfully defended the opponents attack
-    // return the damage to apply to defender
+    /**
+     * @brief called when a character successfully defends a attack
+     *
+     * Default is 0 damage, bt races override this method to implement special abilities
+     *
+     * @param attackerAdjustedAttack attack value after modifier
+     * @return Damage applied to defender
+     */
+
     virtual int onSuccessfulDefence(int attackerAdjustedAttack){
         return 0;       //by default successful defence causes no damage unless item ability provides
     }
 
-    //Apply the damage to the character but the health cannot go below 0.
+    /**
+     * @brief Applies damage to character
+     * @param damage amount of health lost
+     */
     void takeDamage(int damage){
         if(damage <= 0){
             return;
@@ -85,14 +156,22 @@ public:         //When a character is initiated, we can load their base stats ba
         }
     }
 
-    //An item picked up must be added to the inventory
+    /**
+     * @brief addItem - will add an item to the inventory and apply stat bonuses
+     * @param it Item to add
+     */
     void addItem(const Item &it){
         inventory.push_back(it);        // should apply the health/strength modifications
         health += it.healthMod;
         strength += it.strengthMod;
     }
 
-    //This function rolls a probability dice
+    /**
+     * @brief rollChance - Performs a probability roll
+     * @param num Success numerator
+     * @param den Denominator
+     * @return True if roll succeeds
+     */
     bool rollChance(int num, int den){
         if(num <=0) {
             return false;
@@ -105,6 +184,9 @@ public:         //When a character is initiated, we can load their base stats ba
         return v <= num;
     }
 
+    /**
+     * @brief printStats - prints character stats to console
+     */
     virtual void printStats() const {
         std::cout << name << " (" << baseProps.name << ") A:" << getAttackValue() << " D:" << getDefenceValue() << " H:" << health << " S:" << strength << "\n";
     }
