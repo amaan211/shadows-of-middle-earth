@@ -1,4 +1,5 @@
-// THis file is to implement specialized classes to override onSuccessfulDefence()
+// This file contains the race specific subclasses of the characters, each race overrides the onSuccessfulDefence() function
+//when needed because different races have different rules
 
 #include "Character.h"
 
@@ -40,10 +41,10 @@ public:
             int myDef = getDefenceValue();
             int adjusted = attackerAdjustedAttack - myDef;
             if(adjusted <= 0){
-                return 0;
+                return 0;       //if attack is too weak then the orc takes no damage
             }
             return std::max(0, adjusted/4);
-        }else{                          //During the +Night
+        }else{                          //During the night
             health += 1;
             return 0;
         }

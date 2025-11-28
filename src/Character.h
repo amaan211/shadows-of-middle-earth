@@ -9,37 +9,38 @@
 #include <algorithm>
 #include <iostream>
 
-//Minimal Item struct for stat modifiers which will expand
-
+//Minimal Item struct for stat modifiers which will expand further on during the gameplay
+//Every item in the game can modify a characters stats.
 struct Item{
-    std::string name;
-    int attackMod = 0;
-    int defenceMod = 0;
+    std::string name;   //Name of Item
+    int attackMod = 0;  //increae/decrease attack
+    int defenceMod = 0; //defence modifier
     int healthMod = 0;
-    int strengthMod = 0;
+    int strengthMod = 0;    //When carrying items like swords can modify
     int weight = 0;
 };
-
+//This class represents any character in the game, it stores race, stats, items
+//THis class will be inherited by specific races with special abilities.
 class Character{
 protected:
-    std::string name;
+    std::string name;       //Basic info
     Race race;
     TimeOfDay tod;
     RaceProperties baseProps;
 
     int health;         //dynamically changing stats
-    int strength;       //dynamically changing stats
+    int strength;
 
-    std::vector<Item> inventory;
+    std::vector<Item> inventory;    //holds all items of the character
 
-    std::mt19937 rng;
+    std::mt19937 rng;       //This is used for attack chances, damage, etc
 
-public:
+public:         //When a character is initiated, we can load their base stats based on their race.
     Character(const std::string& n, Race r, TimeOfDay t = TimeOfDay::Day): name(n), race(r), tod(t){
         baseProps = getRaceProperties(r, t);
-        health = baseProps.baseHealth;
+        health = baseProps.baseHealth;      //set initial health and strength values
         strength = baseProps.baseStrength;
-        std::random_device rd;
+        std::random_device rd;      //This random generator will ensure randomness for different chances
         rng.seed(rd());
     }
 
@@ -47,14 +48,14 @@ public:
     std::string getName() const {return name;}
     Race getRace() const {return race;}
     int getHealth() const {return health;}
-    bool isAlive() const {return health > 0;}
+    bool isAlive() const {return health > 0;}   //Checks if the character is alive
 
-    virtual int getAttackValue() const {
+    virtual int getAttackValue() const {    //calculates total attack value + any attack bonuses
         int total = baseProps.baseAttack;
         for (auto &it : inventory) total += it.attackMod;
         return total;
     }
-    virtual int getDefenceValue() const {
+    virtual int getDefenceValue() const {       //calculates total defence value + any defence bonuses
         int total = baseProps.baseDefence;
         for( auto &it : inventory) total += it.defenceMod;
         return total;
@@ -73,6 +74,7 @@ public:
         return 0;       //by default successful defence causes no damage unless item ability provides
     }
 
+    //Apply the damage to the character but the health cannot go below 0.
     void takeDamage(int damage){
         if(damage <= 0){
             return;
@@ -82,12 +84,15 @@ public:
             health = 0;
         }
     }
+
+    //An item picked up must be added to the inventory
     void addItem(const Item &it){
         inventory.push_back(it);        // should apply the health/strength modifications
         health += it.healthMod;
         strength += it.strengthMod;
     }
 
+    //This function rolls a probability dice
     bool rollChance(int num, int den){
         if(num <=0) {
             return false;

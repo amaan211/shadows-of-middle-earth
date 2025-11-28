@@ -9,6 +9,7 @@ SOURCES += \
     # src/Armour.cpp \
     # src/Inventory.cpp \
     src/Armour.cpp \
+    src/CharacterSpecials.cpp \
     src/Inventory.cpp \
     src/Item.cpp \
     # src/ItemFactory.cpp \
@@ -62,6 +63,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     src/Armour.h \
     src/Armour.h \
+    src/Character.h \
     src/Inventory.h \
     src/Inventory.h \
     src/Item.h \
